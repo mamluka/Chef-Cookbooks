@@ -1,0 +1,7 @@
+hostname = mail.<%= @domain %>
+mydomain = <%= @domain %>
+mydestination = $mydomain,$hostname
+myorigin = $mydomain
+luser_relay = root@$mydomain
+local_recipient_maps =
+
