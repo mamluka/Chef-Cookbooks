@@ -11,7 +11,7 @@ include_recipe "rake"
 include_recipe "git"
 include_recipe "rubygems"
 include_recipe "postfix::client"
-include_recipe "mono"
+include_recipe "install-mono"
 include_recipe "ruby::symlinks"
 include_recipe "mongodb"
 
