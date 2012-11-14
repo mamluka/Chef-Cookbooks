@@ -6,19 +6,34 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-include_recipe "ruby::1.9.1"
-include_recipe "rake"
+include_recipe "apt"
 include_recipe "git"
-include_recipe "rubygems"
-include_recipe "postfix::client"
-include_recipe "install-mono"
+include_recipe "ruby::1.9.1"
 include_recipe "ruby::symlinks"
+include_recipe "rubygems"
+include_recipe "rake"
+include_recipe "postfix::client"
 include_recipe "mongodb"
 
 package 'libmagickwand-dev'
 package 'libxslt-dev'
 package 'libxml2-dev'
 package 'mailutils'
+package 'curl'
+
+#install mono
+
+apt_repository "mono-rep" do
+  uri "http://ppa.launchpad.net/borgdylan/ppa/ubuntu"
+  distribution node['lsb']['codename']
+  components ["main"]
+  keyserver "keyserver.ubuntu.com"
+  key "4B47C289FADDF7CF01380548FAAB7362B99C283A"
+  deb_src true
+end
+
+package 'mono-runtime'
+package 'mono-devel'
 
 #set host to be a mail server
 
