@@ -32,6 +32,17 @@ apt_repository "mono-rep" do
   deb_src true
 end
 
+apt_repository "rsyslog" do
+  uri "http://ppa.launchpad.net/ukplc-team/testing/ubuntu"
+  distribution node['lsb']['codename']
+  components ["main"]
+  keyserver "keyserver.ubuntu.com"
+  key "F262AA585E04325397D7C8BA1C7DAF1E1A39EA92"
+  deb_src true
+end
+
+package 'rsyslog'
+
 package 'mono-runtime'
 package 'mono-devel'
 
