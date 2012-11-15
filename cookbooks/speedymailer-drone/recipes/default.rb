@@ -15,6 +15,8 @@ include_recipe "rake"
 include_recipe "postfix::client"
 include_recipe "mongodb"
 
+package 'libmagickcore-dev'
+package 'libmagickcore4-extra'
 package 'libmagickwand-dev'
 package 'libxslt-dev'
 package 'libxml2-dev'
