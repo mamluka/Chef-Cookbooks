@@ -65,9 +65,6 @@ template "/etc/rsyslog.d/10-mongodb.conf" do
     group "root"
 end
 
-service "rsyslog" do
-  action :reload
-end
 
 #set the domain in the hosts file
 script "add-domain-to-hosts-file" do
@@ -150,4 +147,9 @@ deploy "/deploy/drones" do
         end
 
     end
+end
+
+
+service "rsyslog" do
+  action :restart
 end
