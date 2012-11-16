@@ -24,6 +24,11 @@ package 'libxml2-dev'
 package 'mailutils'
 package 'curl'
 
+#install gems needed to run the rake tasks for speedymailer
+execute "install-gems" do
+  command "gem install nokogiri fileutils albacore"
+end
+
 #install mono
 
 apt_repository "mono-rep" do
@@ -99,10 +104,7 @@ template "/etc/postfix/main.cf" do
     })
 end
 
-#install gems needed to run the rake tasks for speedymailer
-execute "install-gems" do
-  command "gem install nokogiri fileutils albacore"
-end
+
 
 #setup mongo
 
