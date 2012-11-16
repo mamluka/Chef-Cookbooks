@@ -103,9 +103,9 @@ end
 
 #install gems needed to run the rake tasks for speedymailer
 
-execute "install-gems" do
-  command "/usr/bin/gem1.9.1 install albacore fileutils nokogiri"
-end
+gem_package "albacore"
+gem_package "fileutils"
+gem_package "nokogiri"
 
 #deploy the drone
 
