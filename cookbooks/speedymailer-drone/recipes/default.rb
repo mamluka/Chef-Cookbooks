@@ -46,11 +46,11 @@ apt_repository "rsyslog" do
 end
 
 package 'rsyslog'
+package 'rsyslog-mongodb'
 package 'mono-runtime'
 package 'mono-devel'
 
 #set ip address attribute
-
 
 ruby_block "reload_client_config" do
   block do
@@ -74,7 +74,8 @@ script "config-syslog" do
     code <<-EOH
         sudo sh -c 'echo "\$ModLoad ommongodb" >> /etc/rsyslog.conf'
         sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\")" >> /etc/rsyslog.conf'
-        sudo service rsyslog restart
+        sudo service rsyslog stop
+        sudo service rsyslog start
     EOH
 end
 
