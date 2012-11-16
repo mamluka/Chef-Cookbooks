@@ -134,7 +134,7 @@ deploy "/deploy/drones" do
         end
 
         execute "start-mongo" do
-            command "mongod --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal &"
+            command "mongod --fork --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal"
         end
 
         execute "run-drone" do
