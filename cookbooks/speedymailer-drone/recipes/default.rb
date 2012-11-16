@@ -46,9 +46,18 @@ apt_repository "rsyslog" do
 end
 
 package 'rsyslog'
-
 package 'mono-runtime'
 package 'mono-devel'
+
+#set ip address attribute
+
+
+ruby_block "reload_client_config" do
+  block do
+    node[:ipaddress] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
+  end
+  action :create
+end
 
 #set host to be a mail server
 
@@ -56,9 +65,22 @@ file "/etc/hostname" do
      content "mail"
 end
 
+#setup rsyslog logging to mongo
+
+script "config-syslog" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+        sudo sh -c 'echo "$ModLoad ommongodb" >> /etc/rsyslog.conf'
+        sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\")" >> /etc/rsyslog.conf'
+        sudo service rsyslog restart
+    EOH
+end
+
+
+
 #set the domain in the hosts file
-
-
 script "add-domain-to-hosts-file" do
     interpreter "bash"
     user "root"
