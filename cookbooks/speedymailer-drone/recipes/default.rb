@@ -49,6 +49,16 @@ package 'rsyslog'
 package 'mono-runtime'
 package 'mono-devel'
 
+#set ip address attribute
+
+
+ruby_block "reload_client_config" do
+  block do
+    node[:ipaddress] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
+  end
+  action :create
+end
+
 #set host to be a mail server
 
 file "/etc/hostname" do
@@ -68,9 +78,9 @@ script "config-syslog" do
     EOH
 end
 
+
+
 #set the domain in the hosts file
-
-
 script "add-domain-to-hosts-file" do
     interpreter "bash"
     user "root"
