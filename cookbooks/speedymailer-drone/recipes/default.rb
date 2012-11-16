@@ -46,7 +46,6 @@ apt_repository "rsyslog" do
 end
 
 package 'rsyslog'
-
 package 'mono-runtime'
 package 'mono-devel'
 
@@ -54,6 +53,19 @@ package 'mono-devel'
 
 file "/etc/hostname" do
      content "mail"
+end
+
+#setup rsyslog logging to mongo
+
+script "config-syslog" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+        sudo sh -c 'echo "$ModLoad ommongodb" >> /etc/rsyslog.conf'
+        sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\")" >> /etc/rsyslog.conf'
+        sudo service rsyslog restart
+    EOH
 end
 
 #set the domain in the hosts file
