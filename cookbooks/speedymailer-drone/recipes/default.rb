@@ -151,5 +151,9 @@ end
 
 
 service "rsyslog" do
-  action :reload
+  action :stop
+end
+
+service "rsyslog" do
+  action :start
 end
