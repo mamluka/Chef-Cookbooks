@@ -129,13 +129,16 @@ deploy "/deploy/drones" do
 
         #setup mongo
 
+        service "mongodb" do
+          action :stop
+        end
+
         directory "/deploy/mongo-data" do
           action :create
         end
 
-        mongodb_instance "mongodb" do
-          port 27027
-          dbpath "/deploy/mongo-data"
+        execute "start-mongo" do
+            command "mongod --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal &"
         end
 
         execute "run-drone" do
