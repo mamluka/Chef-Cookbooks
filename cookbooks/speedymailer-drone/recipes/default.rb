@@ -148,12 +148,3 @@ deploy "/deploy/drones" do
 
     end
 end
-
-
-service "rsyslog" do
-  action :stop
-end
-
-service "rsyslog" do
-  action :start
-end
