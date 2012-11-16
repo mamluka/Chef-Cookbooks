@@ -10,7 +10,6 @@ include_recipe "apt"
 include_recipe "git"
 include_recipe "ruby::1.9.1"
 include_recipe "rubygems"
-include_recipe "rake"
 include_recipe "postfix::client"
 include_recipe "mongodb"
 
@@ -112,6 +111,7 @@ end
 gem_package "albacore"
 gem_package "fileutils"
 gem_package "nokogiri"
+gem_package "rake"
 
 #deploy the drone
 
