@@ -106,16 +106,7 @@ end
 
 
 
-#setup mongo
 
-directory "/deploy/mongo-data" do
-  action :create
-end
-
-mongodb_instance "mongodb" do
-  port 27027
-  dbpath "/deploy/mongo-data"
-end
 
 #deploy the drone
 
@@ -135,6 +126,17 @@ deploy "/deploy/drones" do
         execute "build-drone-with-mono" do
             cwd current_release
             command "rake mono:build"
+        end
+
+        #setup mongo
+
+        directory "/deploy/mongo-data" do
+          action :create
+        end
+
+        mongodb_instance "mongodb" do
+          port 27027
+          dbpath "/deploy/mongo-data"
         end
 
         execute "run-drone" do
