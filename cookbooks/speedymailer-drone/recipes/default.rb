@@ -24,18 +24,6 @@ package 'libxml2-dev'
 package 'mailutils'
 package 'curl'
 
-#install gems needed to run the rake tasks for speedymailer
-execute "install-gems" do
-  command "gem install nokogiri"
-end
-
-execute "install-gems" do
-  command "gem install fileutils"
-end
-
-execute "install-gems" do
-  command "gem install albacore"
-end
 
 #install mono
 
@@ -112,9 +100,18 @@ template "/etc/postfix/main.cf" do
     })
 end
 
+#install gems needed to run the rake tasks for speedymailer
+execute "install-gems" do
+  command "gem install nokogiri"
+end
 
+execute "install-gems" do
+  command "gem install fileutils"
+end
 
-
+execute "install-gems" do
+  command "gem install albacore"
+end
 
 #deploy the drone
 
