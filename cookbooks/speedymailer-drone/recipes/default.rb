@@ -101,16 +101,9 @@ template "/etc/postfix/main.cf" do
 end
 
 #install gems needed to run the rake tasks for speedymailer
-execute "install-gems" do
-  command "gem install nokogiri"
-end
 
 execute "install-gems" do
-  command "gem install fileutils"
-end
-
-execute "install-gems" do
-  command "gem install albacore"
+  command "gem install albacore fileutils nokogiri"
 end
 
 #deploy the drone
