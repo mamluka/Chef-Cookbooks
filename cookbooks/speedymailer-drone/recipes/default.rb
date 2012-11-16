@@ -22,6 +22,7 @@ package 'libmagickwand-dev'
 package 'libxslt-dev'
 package 'libxml2-dev'
 package 'mailutils'
+package 'dnsutils'
 package 'curl'
 
 
@@ -103,7 +104,7 @@ end
 #install gems needed to run the rake tasks for speedymailer
 
 execute "install-gems" do
-  command "gem install albacore fileutils nokogiri"
+  command "/usr/bin/gem1.9.1 install albacore fileutils nokogiri"
 end
 
 #deploy the drone
