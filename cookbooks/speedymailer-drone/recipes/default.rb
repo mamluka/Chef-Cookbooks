@@ -103,6 +103,12 @@ end
 
 #install gems needed to run the rake tasks for speedymailer
 
+gem_package "rubygems-update"
+
+execute "update-gems" do          
+  command "update_rubygems"
+end
+
 gem_package "albacore"
 gem_package "fileutils"
 gem_package "nokogiri"
