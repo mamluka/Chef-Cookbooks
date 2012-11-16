@@ -26,7 +26,15 @@ package 'curl'
 
 #install gems needed to run the rake tasks for speedymailer
 execute "install-gems" do
-  command "gem install nokogiri fileutils albacore"
+  command "gem install nokogiri"
+end
+
+execute "install-gems" do
+  command "gem install fileutils"
+end
+
+execute "install-gems" do
+  command "gem install albacore"
 end
 
 #install mono
