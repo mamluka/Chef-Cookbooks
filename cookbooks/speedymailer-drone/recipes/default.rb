@@ -11,7 +11,6 @@ include_recipe "git"
 include_recipe "ruby::1.9.1"
 include_recipe "rubygems"
 include_recipe "postfix::client"
-include_recipe "mongodb"
 
 package 'libgvc5'
 package 'libgraphviz-dev'
@@ -23,6 +22,7 @@ package 'libxml2-dev'
 package 'mailutils'
 package 'dnsutils'
 package 'curl'
+package 'mongodb'
 
 
 #install mono
