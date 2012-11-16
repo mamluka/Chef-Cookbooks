@@ -148,3 +148,14 @@ deploy "/deploy/drones" do
 
     end
 end
+
+#ewfresh rsyslog
+script "rsyslog refresh" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      service rsyslog stop
+      service rsyslog start
+    EOH
+end
