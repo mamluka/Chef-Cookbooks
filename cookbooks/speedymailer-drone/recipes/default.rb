@@ -129,10 +129,6 @@ deploy "/deploy/drones" do
 
         #setup mongo
 
-        service "mongodb" do
-          action :stop
-        end
-
         directory "/deploy/mongo-data" do
           action :create
         end
