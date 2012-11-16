@@ -73,9 +73,7 @@ script "config-syslog" do
     cwd "/tmp"
     code <<-EOH
         sudo sh -c 'echo "\$ModLoad ommongodb" >> /etc/rsyslog.conf'
-        sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\")" >> /etc/rsyslog.conf'
-        sudo service rsyslog stop
-        sudo service rsyslog start
+        sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\" db=\"drone\" serverport=\"27027\" )" >> /etc/rsyslog.conf'
     EOH
 end
 
