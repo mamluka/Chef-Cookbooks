@@ -9,7 +9,6 @@
 include_recipe "apt"
 include_recipe "git"
 include_recipe "ruby::1.9.1"
-include_recipe "ruby::symlinks"
 include_recipe "rubygems"
 include_recipe "rake"
 include_recipe "postfix::client"
@@ -50,15 +49,6 @@ package 'rsyslog-mongodb'
 package 'mono-runtime'
 package 'mono-devel'
 
-#set ip address attribute
-
-ruby_block "reload_client_config" do
-  block do
-    node[:ipaddress] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
-  end
-  action :create
-end
-
 #set host to be a mail server
 
 file "/etc/hostname" do
@@ -67,17 +57,16 @@ end
 
 #setup rsyslog logging to mongo
 
-script "config-syslog" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
-        sudo sh -c 'echo "\$ModLoad ommongodb" >> /etc/rsyslog.conf'
-        sudo sh -c 'echo "mail.* action(type=\"ommongodb\" server=\"127.0.0.1\" db=\"drone\" serverport=\"27027\" )" >> /etc/rsyslog.conf'
-    EOH
+template "/etc/rsyslog.d/10-mongodb.conf" do
+    source "10-mongodb.conf.erb"
+    mode 0664
+    owner "root"
+    group "root"
 end
 
-
+service "rsyslog" do
+  action :reload
+end
 
 #set the domain in the hosts file
 script "add-domain-to-hosts-file" do
@@ -87,9 +76,12 @@ script "add-domain-to-hosts-file" do
     code <<-EOH
         original_hostname=$(hostname)
         cat /etc/hosts | grep -Ev $original_hostname | sudo tee /etc/hosts
-
-        echo "#{node[:ipaddress]} mail.#{node[:drone][:domain]} mail" >> /etc/hosts
-        echo "127.0.0.1 mail" >> /etc/host
+        
+        ip=$(/usr/bin/wget -q -O- http://ipecho.net/plain)
+        domain=$(dig +noall +answer -x $ip | awk '{$5=substr($5,1,length($5)-1); print $5}')
+        
+        echo "$ip mail.$domain mail" >> /etc/hosts
+        echo "127.0.0.1 localhost.localdomain mail" >> /etc/hosts
 
         service hostname restart
     EOH
@@ -112,6 +104,17 @@ execute "install-gems" do
   command "gem install nokogiri fileutils albacore"
 end
 
+#setup mongo
+
+directory "/deploy/mongo-data" do
+  action :create
+end
+
+mongodb_instance "mongodb" do
+  port 27027
+  dbpath "/deploy/mongo-data"
+end
+
 #deploy the drone
 
 deploy "/deploy/drones" do
@@ -132,14 +135,6 @@ deploy "/deploy/drones" do
             command "rake mono:build"
         end
 
-        directory "/deploy/mongo-data" do
-            action :create
-        end
-
-        execute "start-mongo" do
-            command "mongod --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal &"
-        end
-
         execute "run-drone" do
            cwd drone_path
 
@@ -148,5 +143,3 @@ deploy "/deploy/drones" do
 
     end
 end
-
-
