@@ -216,9 +216,14 @@ deploy "/deploy/drones" do
             command "rake mono:build"
         end
 
+        execute "echo-master" do
+           cwd drone_path
+           command "echo '#{node[:drone][:master]}'"
+        end
+        
         execute "run-drone" do
            cwd drone_path
-           command "echo '#{node[:drone][:master]}' && mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]}"
+           command "mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
         end
 
     end
