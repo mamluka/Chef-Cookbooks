@@ -23,8 +23,13 @@ package 'mongodb'
 
 #write ip and domain
 
+e = execute "apt-get update" do
+  action :nothing
+end
+ 
+e.run_action(:run)
 
-dns_utils = package 'dnsutils' do
+dns_utils = package "dnsutils" do
   action :nothing
 end
 
