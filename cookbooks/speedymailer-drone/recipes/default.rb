@@ -104,6 +104,9 @@ template "/etc/opendkim.conf" do
     mode 0664
     owner "root"
     group "root"
+    variables({
+        :domain => node[:drone][:domain]
+    })
 end
 
 template "/etc/default/opendkim" do
