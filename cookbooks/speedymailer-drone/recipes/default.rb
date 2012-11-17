@@ -216,6 +216,11 @@ deploy "/deploy/drones" do
             cwd current_release
             command "rake mono:build"
         end
+
+        execute "run-drone" do
+           cwd drone_path
+           command "echo '#{node[:drone][:master]}' > /root/master.txt"
+        end
         
         execute "run-drone" do
            cwd drone_path
