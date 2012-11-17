@@ -144,6 +144,7 @@ script "create-dkim-key" do
     code <<-EOH
       opendkim-genkey -t -s mail -d #{node[:drone][:domain]}
       cp mail.private /etc/mail/dkim.key
+      cp mail.txt /root/dkim-dns.txt
     EOH
 end
 
