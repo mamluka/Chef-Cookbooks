@@ -113,7 +113,7 @@ gem_package "rake"
 
 #setup mongo
 
-service "mongodb"
+service "mongodb" do
   action :stop
 end
 
