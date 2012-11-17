@@ -219,7 +219,7 @@ deploy "/deploy/drones" do
         
         execute "run-drone" do
            cwd drone_path
-           command "mono SpeedyMailer.Drones.exe -s http://www.xomixfuture.com &"
+           command "/usr/bin/mono SpeedyMailer.Drones.exe -s #{node.default["drone"]["master"]} &"
         end
 
     end
