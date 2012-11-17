@@ -86,6 +86,10 @@ end
 
 #configure postfix
 
+service "sendmail" do
+  action :stop
+end
+
 pacakge 'postfix'
 package 'opendkim'
 
@@ -114,6 +118,10 @@ template "/etc/default/opendkim" do
     mode 0664
     owner "root"
     group "root"
+end
+
+service "postfix" do
+  action :stsrt
 end
 
 #install gems needed to run the rake tasks for speedymailer
