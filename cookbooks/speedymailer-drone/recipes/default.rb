@@ -18,11 +18,17 @@ package 'libmagickwand-dev'
 package 'libxslt-dev'
 package 'libxml2-dev'
 package 'mailutils'
-package 'dnsutils'
 package 'curl'
 package 'mongodb'
 
 #write ip and domain
+
+
+dns_utils = package 'dnsutils' do
+  action :nothing
+end
+
+dns_utils.run_action(:install)
 
 node.default["drone"]["ip"] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
 node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x #{node.default["drone"]["ip"]} | awk '{$5=substr($5,1,length($5)-1); print $5}' | tr  -d '\n'`
