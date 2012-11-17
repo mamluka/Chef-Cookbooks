@@ -218,7 +218,7 @@ deploy "/deploy/drones" do
 
         execute "run-drone" do
            cwd drone_path
-           command "mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
+           command "echo '#{node[:drone][:master]}' && mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]}"
         end
 
     end
