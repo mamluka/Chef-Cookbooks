@@ -132,7 +132,7 @@ template "/etc/default/opendkim" do
 end
 
 service "postfix" do
-  action :stsrt
+  action :start
 end
 
 #install gems needed to run the rake tasks for speedymailer
