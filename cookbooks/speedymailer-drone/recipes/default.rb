@@ -24,6 +24,10 @@ package 'dnsutils'
 package 'curl'
 package 'mongodb'
 
+#write ip and domain
+
+node.default["drone"]["ip"] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
+node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x $ip | awk '{$5=substr($5,1,length($5)-1); print $5}'`
 
 #install mono
 
@@ -74,12 +78,9 @@ script "add-domain-to-hosts-file" do
     code <<-EOH
         original_hostname=$(hostname)
         cat /etc/hosts | grep -Ev $original_hostname | sudo tee /etc/hosts
-        
-        ip=$(/usr/bin/wget -q -O- http://ipecho.net/plain)
-        domain=$(dig +noall +answer -x $ip | awk '{$5=substr($5,1,length($5)-1); print $5}')
-        
-        echo "$ip mail.$domain mail" >> /etc/hosts
-        echo "127.0.0.1 localhost.localdomain mail" >> /etc/hosts
+                
+        echo "#{node[:drone][:ip]} mail.#{node[:drone][:domain]} mail" >> /etc/hosts
+        echo "#{node[:drone][:ip]} localhost.localdomain mail" >> /etc/hosts
 
         service hostname restart
     EOH
@@ -110,6 +111,27 @@ gem_package "fileutils"
 gem_package "nokogiri"
 gem_package "rake"
 
+#setup mongo
+
+directory "/deploy/mongo-data" do
+    action :create
+end
+
+execute "start-mongo" do
+    command "mongod --fork --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal --logpath /var/log/mongodb/drone.log"
+end
+
+#ewfresh rsyslog
+script "rsyslog refresh" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      service rsyslog stop
+      service rsyslog start
+    EOH
+end
+
 #deploy the drone
 
 deploy "/deploy/drones" do
@@ -130,15 +152,7 @@ deploy "/deploy/drones" do
             command "rake mono:build"
         end
 
-        #setup mongo
-
-        directory "/deploy/mongo-data" do
-          action :create
-        end
-
-        execute "start-mongo" do
-            command "mongod --fork --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal --logpath /var/log/mongodb/drone.log"
-        end
+        
 
         execute "run-drone" do
            cwd drone_path
@@ -149,13 +163,4 @@ deploy "/deploy/drones" do
     end
 end
 
-#ewfresh rsyslog
-script "rsyslog refresh" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
-      service rsyslog stop
-      service rsyslog start
-    EOH
-end
+
