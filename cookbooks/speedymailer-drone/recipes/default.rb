@@ -101,7 +101,7 @@ service "sendmail" do
   action :stop
 end
 
-pacakge 'postfix'
+package 'postfix'
 package 'opendkim'
 
 template "/etc/postfix/main.cf" do
