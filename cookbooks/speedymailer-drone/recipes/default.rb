@@ -156,6 +156,7 @@ end
 
 directory "/deploy/mongo-data" do
     action :create
+    recursive :true
 end
 
 execute "start-mongo" do
