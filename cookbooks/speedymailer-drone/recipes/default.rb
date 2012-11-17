@@ -1,4 +1,3 @@
-#
 # Cookbook Name:: speedymailer-drone
 # Recipe:: default
 #
@@ -10,7 +9,6 @@ include_recipe "apt"
 include_recipe "git"
 include_recipe "ruby::1.9.1"
 include_recipe "rubygems"
-include_recipe "postfix::client"
 
 package 'libgvc5'
 package 'libgraphviz-dev'
@@ -88,6 +86,9 @@ end
 
 #configure postfix
 
+pacakge 'postfix'
+package 'opendkim'
+
 template "/etc/postfix/main.cf" do
     source "main.cf.erb"
     mode 0664
@@ -96,6 +97,20 @@ template "/etc/postfix/main.cf" do
     variables({
         :domain => node[:drone][:domain]
     })
+end
+
+template "/etc/opendkim.conf" do
+    source "opendkim.conf.erb"
+    mode 0664
+    owner "root"
+    group "root"
+end
+
+template "/etc/default/opendkim" do
+    source "opendkim.erb"
+    mode 0664
+    owner "root"
+    group "root"
 end
 
 #install gems needed to run the rake tasks for speedymailer
@@ -165,5 +180,3 @@ deploy "/deploy/drones" do
 
     end
 end
-
-
