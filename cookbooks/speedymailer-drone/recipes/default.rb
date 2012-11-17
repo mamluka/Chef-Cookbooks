@@ -38,6 +38,12 @@ dns_utils.run_action(:install)
 node.default["drone"]["ip"] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
 node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x #{node.default["drone"]["ip"]} | awk '{$5=substr($5,1,length($5)-1); print $5}' | tr  -d '\n'`
 
+#stop apache - we don't need it
+
+service "apache" do
+  action :stop
+end
+
 #install mono
 
 apt_repository "mono-rep" do
@@ -131,8 +137,22 @@ template "/etc/default/opendkim" do
     group "root"
 end
 
+script "create-dkim-key" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      opendkim-genkey -t -s mail -d #{node[:drone][:domain]}
+      cp mail.private /etc/mail/dkim.key
+    EOH
+end
+
 service "postfix" do
   action :start
+end
+
+service "opendkim" do
+  action :restart
 end
 
 #install gems needed to run the rake tasks for speedymailer
@@ -197,7 +217,6 @@ deploy "/deploy/drones" do
 
         execute "run-drone" do
            cwd drone_path
-
            command "mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
         end
 
