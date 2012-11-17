@@ -40,7 +40,7 @@ node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x #{node.default
 
 #stop apache - we don't need it
 
-service "apache" do
+service "apache2" do
   action :stop
 end
 
