@@ -113,6 +113,10 @@ gem_package "rake"
 
 #setup mongo
 
+service "mongodb"
+  action :stop
+end
+
 directory "/deploy/mongo-data" do
     action :create
 end
