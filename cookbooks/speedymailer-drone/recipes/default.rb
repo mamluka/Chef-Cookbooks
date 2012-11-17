@@ -191,6 +191,7 @@ script "rsyslog refresh" do
     user "root"
     cwd "/tmp"
     code <<-EOH
+      rm /var/spool/rsyslog/*
       service rsyslog stop
       service rsyslog start
     EOH
