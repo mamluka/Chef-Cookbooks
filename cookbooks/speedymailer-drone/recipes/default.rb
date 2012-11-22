@@ -13,7 +13,7 @@ include_recipe "rubygems"
 package 'libgvc5'
 package 'libgraphviz-dev'
 package 'libmagickcore-dev'
-package 'libmagickcore4-extra'
+#package 'libmagickcore4-extra'
 package 'libmagickwand-dev'
 package 'libxslt-dev'
 package 'libxml2-dev'
