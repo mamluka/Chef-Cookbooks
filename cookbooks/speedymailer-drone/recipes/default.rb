@@ -189,6 +189,7 @@ end
 directory "/deploy/mongo-data" do
     action :create
     recursive true
+    not_if "test -d /deploy/mongo-data"
 end
 
 execute "start-mongo" do
