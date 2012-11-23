@@ -164,8 +164,13 @@ execute "update-gems" do
   command "update_rubygems"
 end
 
-gem_package "albacore"
-gem_package "fileutils"
+gem_package "albacore" do
+  not_if "gem list | grep albacore"
+end
+
+gem_package "fileutils" do
+  not_if "gem list | grep fileutils"
+end
 gem_package "nokogiri"
 gem_package "rake"
 
