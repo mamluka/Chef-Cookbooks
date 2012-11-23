@@ -53,6 +53,8 @@ apt_repository "mono-rep" do
   keyserver "keyserver.ubuntu.com"
   key "4B47C289FADDF7CF01380548FAAB7362B99C283A"
   deb_src true
+
+  not_if "cat /etc/apt/sources.list.d/* | grep borgdylan"
 end
 
 apt_repository "rsyslog" do
@@ -62,6 +64,8 @@ apt_repository "rsyslog" do
   keyserver "keyserver.ubuntu.com"
   key "F262AA585E04325397D7C8BA1C7DAF1E1A39EA92"
   deb_src true
+
+  not_if "cat /etc/apt/sources.list.d/* | grep ukplc-team"
 end
 
 package 'rsyslog'
