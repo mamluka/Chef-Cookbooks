@@ -171,8 +171,14 @@ end
 gem_package "fileutils" do
   not_if "gem list | grep fileutils"
 end
-gem_package "nokogiri"
-gem_package "rake"
+
+gem_package "nokogiri" do
+  not_if "gem list | grep nokogiri"
+end
+
+gem_package "rake" do
+  not_if "gem list | grep rake"
+end
 
 #setup mongo
 
