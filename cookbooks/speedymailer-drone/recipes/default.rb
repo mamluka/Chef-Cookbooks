@@ -232,12 +232,13 @@ deploy "/deploy/drones" do
             cwd current_release
             command "rake mono:build"
         end
-
-        execute "run-drone" do
-           cwd drone_path
-           command "echo '#{node[:drone][:master]}' > /root/master.txt"
-        end
         
+        execute "kill-running-drone" do
+           cwd drone_path
+           command "ps aux | grep mono | grep -v grep | awk '{print $2}' | xargs kill -9"
+           only_if "ps aux | grep mono | grep -v grep"
+        end
+
         execute "run-drone" do
            cwd drone_path
            command "nohup mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
