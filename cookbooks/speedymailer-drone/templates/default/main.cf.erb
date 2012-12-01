@@ -1,9 +1,11 @@
 hostname = mail.<%= @domain %>
 mydomain = <%= @domain %>
 mydestination = $mydomain,$hostname
-myorigin = $mydomain
-luser_relay = root@$mydomain
+myorigin = <%= @domain %>
+luser_relay = root@<%= @domain %>
 local_recipient_maps =
+
+notify_classes=
 
 maximal_queue_lifetime = 0
 
@@ -11,4 +13,6 @@ milter_default_action = accept
 milter_protocol = 2
 smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891
+
+
 
