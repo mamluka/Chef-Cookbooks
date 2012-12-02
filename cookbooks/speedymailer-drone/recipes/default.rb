@@ -213,6 +213,11 @@ script "rsyslog refresh" do
     EOH
 end
 
+execute "setup-port-forwarding" do
+  command "iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080"
+  not_if " iptables -t nat -L -n -v | grep 8080"
+end
+
 #deploy the drone
 
 deploy "/deploy/drones" do
