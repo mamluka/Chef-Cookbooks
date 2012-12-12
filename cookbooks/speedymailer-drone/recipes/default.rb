@@ -124,6 +124,13 @@ template "/etc/postfix/main.cf" do
     })
 end
 
+template "/etc/postfix/header_checks" do
+    source "header_checks"
+    mode 0664
+    owner "root"
+    group "root"
+end
+
 template "/etc/opendkim.conf" do
     source "opendkim.conf.erb"
     mode 0664
