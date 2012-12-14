@@ -112,6 +112,7 @@ service "sendmail" do
 end
 
 package 'postfix'
+package 'postfix-pcre'
 package 'opendkim'
 
 template "/etc/postfix/main.cf" do
