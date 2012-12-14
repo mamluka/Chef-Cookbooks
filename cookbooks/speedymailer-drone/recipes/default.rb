@@ -215,7 +215,7 @@ script "rsyslog refresh" do
     cwd "/tmp"
     code <<-EOH
       rm /var/spool/rsyslog/*
-      cat /etc/rsyslog.conf  | grep -v imklog > /etc/rsyslog.conf
+      sed '/imklog/d' /etc/rsyslog.conf
       service rsyslog stop
       service rsyslog start
     EOH
