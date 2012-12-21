@@ -180,6 +180,8 @@ script "create-domain-key" do
       openssl rsa -in private.key -out public.key -pubout -outform PEM
       cp private.key /etc/mail/domainkey.key
       cp public.key /root/domain-keys-dns.txt
+      service dk-filter stop
+      service dk-filter start
     EOH
 end
 
