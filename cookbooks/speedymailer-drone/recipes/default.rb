@@ -114,6 +114,7 @@ end
 package 'postfix'
 package 'postfix-pcre'
 package 'opendkim'
+package 'dk-filter'
 
 template "/etc/postfix/main.cf" do
     source "main.cf.erb"
@@ -149,6 +150,16 @@ template "/etc/default/opendkim" do
     group "root"
 end
 
+template "/etc/default/dk-filter" do
+    source "dk-filter.erb"
+    mode 0664
+    owner "root"
+    group "root"
+     variables({
+        :domain => node[:drone][:domain]
+    })
+end
+
 script "create-dkim-key" do
     interpreter "bash"
     user "root"
@@ -157,6 +168,18 @@ script "create-dkim-key" do
       opendkim-genkey -t -s mail -d #{node[:drone][:domain]}
       cp mail.private /etc/mail/dkim.key
       cp mail.txt /root/dkim-dns.txt
+    EOH
+end
+
+script "create-domain-key" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      openssl genrsa -out private.key 1024
+      openssl rsa -in private.key -out public.key -pubout -outform PEM
+      cp private.key /etc/mail/domainkey.key
+      cp public.key /root/domain-keys-dns.txt
     EOH
 end
 
