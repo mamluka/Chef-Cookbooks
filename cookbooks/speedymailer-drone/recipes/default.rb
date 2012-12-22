@@ -228,10 +228,6 @@ gem_package "albacore" do
   not_if "gem list | grep albacore"
 end
 
-gem_package "fileutils" do
-  not_if "gem list | grep fileutils"
-end
-
 gem_package "nokogiri" do
   not_if "gem list | grep nokogiri"
 end
