@@ -81,7 +81,7 @@ end
 package 'rsyslog'
 
 execute "stop-rsyslog-service" do
-  command "service rsyslog stop"
+  command "ps aux | grep rsyslog | grep -v grep | awk '{print $2}' | xargs kill -9"
 end
 
 package 'rsyslog-mongodb'
