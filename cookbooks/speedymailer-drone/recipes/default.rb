@@ -80,6 +80,11 @@ apt_repository "rsyslog" do
 end
 
 package 'rsyslog'
+
+execute "stop-rsyslog-service" do
+  command "service rsyslog stop"
+end
+
 package 'rsyslog-mongodb'
 package 'mono-runtime'
 package 'mono-devel'
@@ -252,7 +257,6 @@ script "rsyslog refresh" do
     user "root"
     cwd "/tmp"
     code <<-EOH
-      rm /var/spool/rsyslog/*
       sed -i '/imklog/d' /etc/rsyslog.conf
       service rsyslog stop
       service rsyslog start
