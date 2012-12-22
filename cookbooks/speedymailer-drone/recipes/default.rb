@@ -21,6 +21,16 @@ package 'mailutils'
 package 'curl'
 package 'mongodb'
 
+#add backports repo
+script "add-backport-deb" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
+    EOH
+end
+
 #write ip and domain
 
 e = execute "apt-get update" do
@@ -42,17 +52,6 @@ node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x #{node.default
 
 service "apache2" do
   action :stop
-end
-
-#add backports repo
-
-script "add-backport-deb" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
-      echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
-    EOH
 end
 
 #install mono
@@ -129,9 +128,16 @@ end
 
 package 'postfix'
 package 'postfix-pcre'
-package 'opendkim/precise-backports'
-package 'opendkim-tools/precise-backports'
 package 'dk-filter'
+
+script "install-open-dkim" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      apt-get install opendkim/precise-backports opendkim-tools/precise-backports -y
+    EOH
+end
 
 template "/etc/postfix/main.cf" do
     source "main.cf.erb"
