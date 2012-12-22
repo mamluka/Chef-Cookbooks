@@ -44,6 +44,17 @@ service "apache2" do
   action :stop
 end
 
+#add backports repo
+
+script "add-backport-deb" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
+    EOH
+end
+
 #install mono
 
 apt_repository "mono-rep" do
@@ -113,7 +124,8 @@ end
 
 package 'postfix'
 package 'postfix-pcre'
-package 'opendkim'
+package 'opendkim/precise-backports'
+package 'opendkim-tools/precise-backports'
 package 'dk-filter'
 
 template "/etc/postfix/main.cf" do
