@@ -192,6 +192,8 @@ script "create-dkim-key" do
       cp mail.private /etc/mail/dkim.key
       cp mail.txt /root/dkim-dns.txt
     EOH
+    
+    if_not "test -f /root/dkim-dns.txt"
 end
 
 script "create-domain-key" do
@@ -206,6 +208,8 @@ script "create-domain-key" do
       service dk-filter stop
       service dk-filter start
     EOH
+    
+    if_not "test -f /root/domain-keys-dns.txt"
 end
 
 service "postfix" do
@@ -234,6 +238,10 @@ end
 
 gem_package "rake" do
   not_if "gem list | grep rake"
+end
+
+gem_package "thor" do
+  not_if "gem list | grep thor"
 end
 
 #setup mongo
@@ -284,11 +292,16 @@ template "/root" do
     group "root"
 end
 
-template "/root" do
-    source ".bash_profile.erb"
-    mode 0664
+template "/root/bin" do
+    source "drone-admin.rb.erb"
+    mode 0755
     owner "root"
     group "root"
+end
+
+execute "setup drone alias" do
+  command "echo \"alias drone='drone-admin.rb'\" && source /root/.bashrc"
+  not_if "cat /root/.bashrc | grep drone-admin"
 end
 
 #deploy the drone
