@@ -270,6 +270,27 @@ execute "setup-port-forwarding" do
   not_if " iptables -t nat -L -n -v | grep 8080"
 end
 
+#deploy scripts
+
+directory "/root/bin" do
+    action :create
+    recursive true
+end
+
+template "/root" do
+    source ".bash_profile.erb"
+    mode 0664
+    owner "root"
+    group "root"
+end
+
+template "/root" do
+    source ".bash_profile.erb"
+    mode 0664
+    owner "root"
+    group "root"
+end
+
 #deploy the drone
 
 deploy "/deploy/drones" do
@@ -300,6 +321,5 @@ deploy "/deploy/drones" do
            cwd drone_path
            command "nohup mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
         end
-
     end
 end
