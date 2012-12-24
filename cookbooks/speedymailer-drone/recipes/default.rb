@@ -293,9 +293,15 @@ template "/root/bin/drone-admin.rb" do
     group "root"
 end
 
-execute "setup drone alias" do
-  command "echo \"alias drone='drone-admin.rb'\" >> /root/.bashrc && source /root/.bashrc && source /root/.bash_profile"
-  not_if "cat /root/.bashrc | grep drone-admin"
+script "setup drone alias" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      echo "alias drone='drone-admin.rb'" >> /root/.bashrc 
+      source /root/.bashrc 
+      source /root/.bash_profile
+    EOH
 end
 
 #deploy the drone
