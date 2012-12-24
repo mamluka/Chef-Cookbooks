@@ -285,14 +285,14 @@ directory "/root/bin" do
     recursive true
 end
 
-template "/root" do
+template "/root/.bash_profile" do
     source ".bash_profile.erb"
     mode 0664
     owner "root"
     group "root"
 end
 
-template "/root/bin" do
+template "/root/bin/drone-admin.rb" do
     source "drone-admin.rb.erb"
     mode 0755
     owner "root"
@@ -300,7 +300,7 @@ template "/root/bin" do
 end
 
 execute "setup drone alias" do
-  command "echo \"alias drone='drone-admin.rb'\" && source /root/.bashrc"
+  command "echo \"alias drone='drone-admin.rb'\" && source /root/.bashrc && source /root/.bash_profile"
   not_if "cat /root/.bashrc | grep drone-admin"
 end
 
