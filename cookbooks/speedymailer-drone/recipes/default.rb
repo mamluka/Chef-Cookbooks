@@ -264,7 +264,6 @@ script "rsyslog refresh" do
     code <<-EOH
       sed -i '/imklog/d' /etc/rsyslog.conf
       ps aux | grep rsyslog | grep -v grep | awk '{print $2}' | xargs kill -9
-      service rsyslog start
     EOH
 end
 
