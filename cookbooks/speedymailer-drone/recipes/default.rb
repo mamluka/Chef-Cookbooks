@@ -78,13 +78,6 @@ apt_repository "rsyslog" do
   not_if "cat /etc/apt/sources.list.d/* | grep ukplc-team"
 end
 
-package 'rsyslog'
-
-execute "stop-rsyslog-service" do
-  command "ps aux | grep rsyslog | grep -v grep | awk '{print $2}' | xargs kill -9"
-end
-
-package 'rsyslog-mongodb'
 package 'mono-runtime'
 package 'mono-devel'
 
@@ -261,6 +254,8 @@ execute "start-mongo" do
 end
 
 #ewfresh rsyslog
+package 'rsyslog'
+package 'rsyslog-mongodb'
 
 script "rsyslog refresh" do
     interpreter "bash"
@@ -268,7 +263,7 @@ script "rsyslog refresh" do
     cwd "/tmp"
     code <<-EOH
       sed -i '/imklog/d' /etc/rsyslog.conf
-      service rsyslog stop
+      ps aux | grep rsyslog | grep -v grep | awk '{print $2}' | xargs kill -9
       service rsyslog start
     EOH
 end
