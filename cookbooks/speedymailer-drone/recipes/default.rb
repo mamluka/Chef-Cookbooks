@@ -193,7 +193,7 @@ script "create-dkim-key" do
       cp mail.txt /root/dkim-dns.txt
     EOH
     
-    if_not "test -f /root/dkim-dns.txt"
+    not_if "test -f /root/dkim-dns.txt"
 end
 
 script "create-domain-key" do
@@ -209,7 +209,7 @@ script "create-domain-key" do
       service dk-filter start
     EOH
     
-    if_not "test -f /root/domain-keys-dns.txt"
+    not_if "test -f /root/domain-keys-dns.txt"
 end
 
 service "postfix" do
