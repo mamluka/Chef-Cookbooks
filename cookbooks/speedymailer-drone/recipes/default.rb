@@ -237,6 +237,17 @@ gem_package "thor" do
   not_if "gem list | grep thor"
 end
 
+script "install proctable" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      gem install sys-proctable --platform linux
+    EOH
+    
+    not_if "gem list | grep proctable"
+end
+
 #setup mongo
 
 service "mongodb" do
