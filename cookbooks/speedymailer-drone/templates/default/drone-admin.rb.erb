@@ -45,6 +45,26 @@ class Drone < Thor
   def drop_database()
     MongoClient.new("localhost", 27027).drop_database("drone")
   end
+  
+  desc "test_email","send a test email to david.mazvovsky@gmail.com"
+  def test_email()
+    options = {:address => "127.0.0.1",
+           :port => 25}
+    Mail.defaults do
+      delivery_method :smtp, options
+    end
+
+    mail = Mail.new do
+      from 'somedude@otherdomain.com'
+      to 'admin@domain.com'
+      subject 'This is a test email'
+      body File.read('body.txt')
+    end
+
+    puts mail.to_s
+
+    mail.deliver!
+  end
 
 end
 
