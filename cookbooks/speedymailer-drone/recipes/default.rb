@@ -23,12 +23,12 @@ package 'mongodb'
 
 #add backports repo
 script "add-backport-deb" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
-    EOH
+  EOH
 end
 
 #write ip and domain
@@ -36,7 +36,7 @@ end
 e = execute "apt-get update" do
   action :nothing
 end
- 
+
 e.run_action(:run)
 
 dns_utils = package "dnsutils" do
@@ -84,25 +84,25 @@ package 'mono-devel'
 #set host to be a mail server
 
 file "/etc/hostname" do
-     content "mail"
+  content "mail"
 end
 
 #setup rsyslog logging to mongo
 
 template "/etc/rsyslog.d/10-mongodb.conf" do
-    source "10-mongodb.conf.erb"
-    mode 0664
-    owner "root"
-    group "root"
+  source "10-mongodb.conf.erb"
+  mode 0664
+  owner "root"
+  group "root"
 end
 
 
 #set the domain in the hosts file
 script "add-domain-to-hosts-file" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
         original_hostname=$(hostname)
         cat /etc/hosts | grep -Ev $original_hostname | sudo tee /etc/hosts
                 
@@ -110,7 +110,7 @@ script "add-domain-to-hosts-file" do
         echo "#{node[:drone][:ip]} localhost.localdomain mail" >> /etc/hosts
 
         service hostname restart
-    EOH
+  EOH
 end
 
 #configure postfix
@@ -124,85 +124,82 @@ package 'postfix-pcre'
 package 'dk-filter'
 
 script "install-open-dkim" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       apt-get install opendkim/precise-backports opendkim-tools/precise-backports -y
-    EOH
+  EOH
 end
 
 template "/etc/postfix/main.cf" do
-    source "main.cf.erb"
-    mode 0664
-    owner "root"
-    group "root"
-    variables({
-        :domain => node[:drone][:domain]
-    })
+  source "main.cf.erb"
+  mode 0664
+  owner "root"
+  group "root"
+  variables({
+                :domain => node[:drone][:domain]
+            })
 end
 
 template "/etc/postfix/header_checks" do
-    source "header_checks"
-    mode 0664
-    owner "root"
-    group "root"
+  source "header_checks"
+  mode 0664
+  owner "root"
+  group "root"
 end
 
 template "/etc/opendkim.conf" do
-    source "opendkim.conf.erb"
-    mode 0664
-    owner "root"
-    group "root"
-    variables({
-        :domain => node[:drone][:domain]
-    })
+  source "opendkim.conf.erb"
+  mode 0664
+  owner "root"
+  group "root"
+  variables({
+                :domain => node[:drone][:domain]
+            })
 end
 
 template "/etc/default/opendkim" do
-    source "opendkim.erb"
-    mode 0664
-    owner "root"
-    group "root"
+  source "opendkim.erb"
+  mode 0664
+  owner "root"
+  group "root"
 end
 
-template "/etc/default/dk-filter" do
-    source "dk-filter.erb"
-    mode 0664
-    owner "root"
-    group "root"
-     variables({
-        :domain => node[:drone][:domain]
-    })
+template "/etc/mail/dkim-InternalHosts.txt" do
+  source "dkim-InternalHosts.txt.erb"
+  mode 0664
+  owner "root"
+  group "root"
 end
 
 script "create-dkim-key" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       opendkim-genkey -t -s mail -d #{node[:drone][:domain]}
       cp mail.private /etc/mail/dkim.key
       cp mail.txt /root/dkim-dns.txt
-    EOH
-    
-    not_if "test -f /root/dkim-dns.txt"
+  EOH
+
+  not_if "test -f /root/dkim-dns.txt"
 end
 
 script "create-domain-key" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       openssl genrsa -out private.key 1024
       openssl rsa -in private.key -out public.key -pubout -outform PEM
       cp private.key /etc/mail/domainkey.key
       cp public.key /root/domain-keys-dns.txt
       service dk-filter stop
       service dk-filter start
-    EOH
-    
-    not_if "test -f /root/domain-keys-dns.txt"
+  EOH
+
+  not_if "test -f /root/domain-keys-dns.txt"
 end
 
 service "postfix" do
@@ -215,23 +212,23 @@ end
 
 #clean deferred queue cron job
 script "setup drone alias" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
         crontab -l > mycron
         sed -i '/no crontab for root/d' mycron
         echo "0 */1 * * * /usr/sbin/postsuper -d ALL deferred" >> mycron
         crontab mycron
         rm mycron
-    EOH
+  EOH
 end
 
 #install gems needed to run the rake tasks for speedymailer
 
 gem_package "rubygems-update"
 
-execute "update-gems" do          
+execute "update-gems" do
   command "update_rubygems"
 end
 
@@ -251,15 +248,27 @@ gem_package "thor" do
   not_if "gem list | grep thor"
 end
 
+gem_package "mail" do
+  not_if "gem list | grep mail"
+end
+
+gem_package "mongo" do
+  not_if "gem list | grep mongo"
+end
+
+gem_package "bson_ext" do
+  not_if "gem list | grep bson_ext"
+end
+
 script "install proctable" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       gem install sys-proctable --platform linux
-    EOH
-    
-    not_if "gem list | grep proctable"
+  EOH
+
+  not_if "gem list | grep proctable"
 end
 
 #setup mongo
@@ -269,13 +278,13 @@ service "mongodb" do
 end
 
 directory "/deploy/mongo-data" do
-    action :create
-    recursive true
-    not_if "test -d /deploy/mongo-data"
+  action :create
+  recursive true
+  not_if "test -d /deploy/mongo-data"
 end
 
 execute "start-mongo" do
-    command "mongod --fork --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal --logpath /var/log/mongodb/drone.log"
+  command "mongod --fork --dbpath /deploy/mongo-data --port 27027 --nohttpinterface --nojournal --logpath /var/log/mongodb/drone.log"
 end
 
 #ewfresh rsyslog
@@ -283,13 +292,13 @@ package 'rsyslog'
 package 'rsyslog-mongodb'
 
 script "rsyslog refresh" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       sed -i '/imklog/d' /etc/rsyslog.conf
       ps aux | grep rsyslog | grep -v grep | awk '{print $2}' | xargs kill -9
-    EOH
+  EOH
 end
 
 execute "setup-port-forwarding" do
@@ -300,64 +309,64 @@ end
 #deploy scripts
 
 directory "/root/bin" do
-    action :create
-    recursive true
+  action :create
+  recursive true
 end
 
 template "/root/.bash_profile" do
-    source ".bash_profile.erb"
-    mode 0664
-    owner "root"
-    group "root"
+  source ".bash_profile.erb"
+  mode 0664
+  owner "root"
+  group "root"
 end
 
 template "/root/bin/drone-admin.rb" do
-    source "drone-admin.rb.erb"
-    mode 0755
-    owner "root"
-    group "root"
+  source "drone-admin.rb.erb"
+  mode 0755
+  owner "root"
+  group "root"
 end
 
 script "setup drone alias" do
-    interpreter "bash"
-    user "root"
-    cwd "/tmp"
-    code <<-EOH
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
       echo "alias drone='drone-admin.rb'" >> /root/.bashrc 
       source /root/.bashrc 
       source /root/.bash_profile
-    EOH
+  EOH
 end
 
 #deploy the drone
 
 deploy "/deploy/drones" do
-    repo "https://github.com/mamluka/SpeedyMailer.git"
-    branch "master"
+  repo "https://github.com/mamluka/SpeedyMailer.git"
+  branch "master"
 
-    symlink_before_migrate.clear
-    purge_before_symlink.clear
-    create_dirs_before_symlink.clear
-    symlinks.clear
-    
-    restart_command do
-        current_release = release_path
-        drone_path = "#{current_release}/Out/Drone"
+  symlink_before_migrate.clear
+  purge_before_symlink.clear
+  create_dirs_before_symlink.clear
+  symlinks.clear
 
-        execute "build-drone-with-mono" do
-            cwd current_release
-            command "rake mono:build"
-        end
-        
-        execute "kill-running-drone" do
-           cwd drone_path
-           command "ps aux | grep mono | grep -v grep | awk '{print $2}' | xargs kill -9"
-           only_if "ps aux | grep mono | grep -v grep"
-        end
+  restart_command do
+    current_release = release_path
+    drone_path = "#{current_release}/Out/Drone"
 
-        execute "run-drone" do
-           cwd drone_path
-           command "nohup mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
-        end
+    execute "build-drone-with-mono" do
+      cwd current_release
+      command "rake mono:build"
     end
+
+    execute "kill-running-drone" do
+      cwd drone_path
+      command "ps aux | grep mono | grep -v grep | awk '{print $2}' | xargs kill -9"
+      only_if "ps aux | grep mono | grep -v grep"
+    end
+
+    execute "run-drone" do
+      cwd drone_path
+      command "nohup mono SpeedyMailer.Drones.exe -s #{node[:drone][:master]} &"
+    end
+  end
 end
