@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 require 'thor'
+require 'mongo'
+
+include Mongo
 
 class Drone < Thor
   @@drone_current_folder = "/deploy/drones/current/Out/Drone/"
@@ -11,8 +14,6 @@ class Drone < Thor
     end
 
     puts "Starting drone on #{master_host_name}"
-  #  `nohup mono #{@@drone_current_folder}/SpeedyMailer.Drones.exe -s#{master_host_name} &`
-
     drone = fork do
       exec "mono #{@@drone_current_folder}/SpeedyMailer.Drones.exe -s#{master_host_name}"
     end
@@ -38,6 +39,11 @@ class Drone < Thor
   desc "mongo","log on to mongo"
   def mongo()
     system("mongo localhost:27027/drone")
+  end
+  
+  desc "drop_database","drops the drone database"
+  def drop_database()
+    MongoClient.new("localhost", 27027).drop_database("drone")
   end
 
 end
