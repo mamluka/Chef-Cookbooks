@@ -213,6 +213,20 @@ service "opendkim" do
   action :restart
 end
 
+#clean deferred queue cron job
+script "setup drone alias" do
+    interpreter "bash"
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+        crontab -l > mycron
+        sed -i '/no crontab for root/d' mycron
+        echo "0 */1 * * * /usr/sbin/postsuper -d ALL deferred" >> mycron
+        crontab mycron
+        rm mycron
+    EOH
+end
+
 #install gems needed to run the rake tasks for speedymailer
 
 gem_package "rubygems-update"
