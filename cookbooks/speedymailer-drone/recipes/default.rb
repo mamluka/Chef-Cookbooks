@@ -333,9 +333,9 @@ script "setup drone alias" do
   cwd "/tmp"
   code <<-EOH
       echo "alias drone='drone-admin.rb'" >> /root/.bashrc 
-      source /root/.bashrc 
-      source /root/.bash_profile
   EOH
+  
+  not_if "grep drone /root/.bashrc"
 end
 
 #deploy the drone
