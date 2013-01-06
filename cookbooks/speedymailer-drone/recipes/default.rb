@@ -28,6 +28,7 @@ script "add-backport-deb" do
   cwd "/tmp"
   code <<-EOH
       echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
+      apt-get update
   EOH
 end
 
@@ -338,7 +339,7 @@ script "setup drone alias" do
   code <<-EOH
       echo "alias drone='drone-admin.rb'" >> /root/.bashrc 
   EOH
-  
+
   not_if "grep drone /root/.bashrc"
 end
 
