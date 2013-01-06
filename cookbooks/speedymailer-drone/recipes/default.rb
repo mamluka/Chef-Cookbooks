@@ -185,6 +185,16 @@ template "/etc/mail/dkim-InternalHosts.txt" do
   group "root"
 end
 
+template "/etc/default/dk-filter" do
+  source "dk-filter.erb"
+  mode 0664
+  owner "root"
+  group "root"
+  variables({
+                :domain => node[:drone][:domain]
+            })
+end
+
 script "create-dkim-key" do
   interpreter "bash"
   user "root"
@@ -195,7 +205,7 @@ script "create-dkim-key" do
       cp mail.txt /deploy/domain-keys/dkim-dns.txt
   EOH
 
-  not_if "test -f /root/dkim-dns.txt"
+  not_if "test -f /deploy/domain-keys/dkim-dns.txt"
 end
 
 script "create-domain-key" do
@@ -211,7 +221,7 @@ script "create-domain-key" do
       service dk-filter start
   EOH
 
-  not_if "test -f /root/domain-keys-dns.txt"
+  not_if "test -f /deploy/domain-keys/domain-keys-dns.txt"
 end
 
 service "postfix" do
@@ -319,11 +329,6 @@ execute "setup-port-forwarding" do
 end
 
 #deploy scripts
-
-directory "/root/bin" do
-  action :create
-  recursive true
-end
 
 template "/root/.bash_profile" do
   source ".bash_profile.erb"
