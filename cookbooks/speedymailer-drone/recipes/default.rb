@@ -46,11 +46,15 @@ end
 dns_utils.run_action(:install)
 
 node.default["drone"]["ip"] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
-node.default["drone"]["domain"] = `/usr/bin/dig +noall +answer -x #{node.default["drone"]["ip"]} | awk '{$5=substr($5,1,length($5)-1); print $5}' | tr  -d '\n'`
 
-if node.default["drone"]["domain"].empty? then
+drone_domain = `/usr/bin/dig +noall +answer -x #{node.default["drone"]["ip"]} | awk '{$5=substr($5,1,length($5)-1); print $5}' | tr  -d '\n'`
+if drone_domain.empty? then
   die "No reverse dns found"
 end
+
+node.default["drone"]["domain"] = drone_domain
+
+
 #stop apache - we don't need it
 
 service "apache2" do
@@ -118,6 +122,10 @@ end
 
 #configure postfix
 
+execute "create-keys-directory" do
+  command "mkdir -p /deploy/domain-keys"
+end
+
 service "sendmail" do
   action :stop
 end
@@ -183,7 +191,7 @@ script "create-dkim-key" do
   code <<-EOH
       opendkim-genkey -t -s mail -d #{node[:drone][:domain]}
       cp mail.private /etc/mail/dkim.key
-      cp mail.txt /root/dkim-dns.txt
+      cp mail.txt /deploy/domain-keys/dkim-dns.txt
   EOH
 
   not_if "test -f /root/dkim-dns.txt"
@@ -197,7 +205,7 @@ script "create-domain-key" do
       openssl genrsa -out private.key 1024
       openssl rsa -in private.key -out public.key -pubout -outform PEM
       cp private.key /etc/mail/domainkey.key
-      cp public.key /root/domain-keys-dns.txt
+      cp public.key /deploy/domain-keys/domain-keys-dns.txt
       service dk-filter stop
       service dk-filter start
   EOH
