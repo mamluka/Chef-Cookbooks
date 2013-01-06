@@ -155,7 +155,7 @@ template "/etc/postfix/main.cf" do
 end
 
 template "/etc/postfix/header_checks" do
-  source "header_checks"
+  source "header_checks.erb"
   mode 0664
   owner "root"
   group "root"
