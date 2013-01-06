@@ -381,6 +381,11 @@ deploy "/deploy/drones" do
     execute "copy-utils" do
       cwd drone_path
       command "cp #{current_release}/Utils/* /deploy/utils/"
+      end
+
+    execute "register-mail-dns-records" do
+      cwd drone_path
+      command "ruby /deploy/utils/create_dns_zones.rb"
     end
 
     execute "run-drone" do
