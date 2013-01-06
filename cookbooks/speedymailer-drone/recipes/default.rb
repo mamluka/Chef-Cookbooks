@@ -120,11 +120,11 @@ script "add-domain-to-hosts-file" do
   EOH
 end
 
-#configure postfix
-
-execute "create-keys-directory" do
-  command "mkdir -p /deploy/domain-keys"
+execute "create-deploy-dirs" do
+  command "mkdir -p /deploy/domain-keys && mkdir -p /deploy/utils"
 end
+
+#configure postfix
 
 service "sendmail" do
   action :stop
@@ -366,6 +366,11 @@ deploy "/deploy/drones" do
       cwd drone_path
       command "ps aux | grep mono | grep -v grep | awk '{print $2}' | xargs kill -9"
       only_if "ps aux | grep mono | grep -v grep"
+    end
+
+    execute "copy-utils" do
+      cwd drone_path
+      command "cp #{current_release}/Utils/* /deploy/utils/"
     end
 
     execute "run-drone" do
