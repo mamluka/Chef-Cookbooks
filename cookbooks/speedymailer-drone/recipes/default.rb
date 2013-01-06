@@ -331,13 +331,6 @@ template "/root/.bash_profile" do
   group "root"
 end
 
-template "/root/bin/drone-admin.rb" do
-  source "drone-admin.rb.erb"
-  mode 0755
-  owner "root"
-  group "root"
-end
-
 script "setup drone alias" do
   interpreter "bash"
   user "root"
