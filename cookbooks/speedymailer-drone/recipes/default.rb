@@ -282,6 +282,10 @@ gem_package "bson_ext" do
   not_if "gem list | grep bson_ext"
 end
 
+gem_package "point" do
+  not_if "gem list | grep point"
+end
+
 script "install proctable" do
   interpreter "bash"
   user "root"
