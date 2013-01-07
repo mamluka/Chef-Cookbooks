@@ -34,7 +34,7 @@ end
 
 #write ip and domain
 
-e = execute "apt-get update" do
+e = execute "/usr/bin/apt-get update" do
   action :nothing
 end
 
@@ -50,7 +50,7 @@ node.default["drone"]["ip"] = `/usr/bin/wget -q -O- http://ipecho.net/plain`
 
 drone_domain = `/usr/bin/dig +noall +answer -x #{node.default["drone"]["ip"]} | awk '{$5=substr($5,1,length($5)-1); print $5}' | tr  -d '\n'`
 if drone_domain.empty? then
-  die "No reverse dns found"
+  abort "No reverse dns found"
 end
 
 node.default["drone"]["domain"] = drone_domain
