@@ -95,16 +95,6 @@ file "/etc/hostname" do
   content "mail"
 end
 
-#setup rsyslog logging to mongo
-
-template "/etc/rsyslog.d/10-mongodb.conf" do
-  source "10-mongodb.conf.erb"
-  mode 0664
-  owner "root"
-  group "root"
-end
-
-
 #set the domain in the hosts file
 script "add-domain-to-hosts-file" do
   interpreter "bash"
@@ -316,6 +306,15 @@ end
 #ewfresh rsyslog
 package 'rsyslog'
 package 'rsyslog-mongodb'
+
+#setup rsyslog logging to mongo
+
+template "/etc/rsyslog.d/10-mongodb.conf" do
+  source "10-mongodb.conf.erb"
+  mode 0664
+  owner "root"
+  group "root"
+end
 
 script "rsyslog refresh" do
   interpreter "bash"
