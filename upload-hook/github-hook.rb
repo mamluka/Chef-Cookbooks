@@ -4,5 +4,5 @@ require 'sinatra'
 set :port, 9494
 
 post '/chef/upload' do
-   system("/root/.chef/uploadme.sh")
+   puts `/root/.chef/chef-repo/uploadme.sh`
 end
