@@ -347,6 +347,7 @@ end
 deploy "/deploy/drones" do
   repo "https://github.com/mamluka/SpeedyMailer.git"
   branch "master"
+  keep_releases 0
 
   symlink_before_migrate.clear
   purge_before_symlink.clear
