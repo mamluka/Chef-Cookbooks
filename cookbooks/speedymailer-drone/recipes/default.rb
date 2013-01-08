@@ -379,7 +379,7 @@ deploy "/deploy/drones" do
 
     execute "copy-utils" do
       cwd drone_path
-      command "cp #{current_release}/Utils/* /deploy/utils/"
+      command "cp #{current_release}/Utils/* /deploy/utils/ && chmod +x /deploy/utils/*.rb"
       end
 
     execute "register-mail-dns-records" do
