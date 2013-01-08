@@ -1,10 +1,3 @@
-# Cookbook Name:: speedymailer-drone
-# Recipe:: default
-#
-# Copyright 2012, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
 include_recipe "apt"
 include_recipe "git"
 include_recipe "ruby::1.9.1"
