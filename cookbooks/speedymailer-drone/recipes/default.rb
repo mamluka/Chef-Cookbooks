@@ -23,6 +23,8 @@ script "add-backport-deb" do
       echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
       apt-get update
   EOH
+
+  not_if "cat /etc/apt/sources.list | grep precise-backports"
 end
 
 #write ip and domain
