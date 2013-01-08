@@ -26,7 +26,6 @@ script "add-backport-deb" do
 end
 
 #write ip and domain
-
 e = execute "/usr/bin/apt-get update" do
   action :nothing
 end
