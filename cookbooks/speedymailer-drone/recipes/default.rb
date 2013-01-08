@@ -48,7 +48,6 @@ end
 
 node.default["drone"]["domain"] = drone_domain
 
-
 #stop apache - we don't need it
 
 service "apache2" do
