@@ -48,13 +48,11 @@ end
 node.default["drone"]["domain"] = drone_domain
 
 #stop apache - we don't need it
-
 service "apache2" do
   action :stop
 end
 
 #install mono
-
 apt_repository "mono-rep" do
   uri "http://ppa.launchpad.net/borgdylan/ppa/ubuntu"
   distribution node['lsb']['codename']
