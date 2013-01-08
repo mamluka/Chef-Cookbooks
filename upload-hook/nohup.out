@@ -1,4 +1,0 @@
-== Sinatra/1.3.3 has taken the stage on 9494 for development with backup from Thin
-From https://github.com/mamluka/Chef-Cookbooks
-   080d012..9ff7f99  master     -> origin/master
-50.57.128.197 - - [08/Jan/2013 04:53:04] "POST /chef/upload HTTP/1.1" 200 - 7.7566
