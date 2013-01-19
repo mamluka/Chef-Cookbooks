@@ -14,25 +14,17 @@ package 'mailutils'
 package 'curl'
 package 'mongodb'
 
-#add backports repo
-script "add-backport-deb" do
-  interpreter "bash"
-  user "root"
-  cwd "/tmp"
-  code <<-EOH
-      echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
-      apt-get update
-  EOH
-
-  not_if "cat /etc/apt/sources.list | grep precise-backports"
-end
-
-#write ip and domain
-e = execute "/usr/bin/apt-get update" do
+#kill to free up memory
+kill_action = execute "ps aux | grep 'rsyslog\|mono\|mongod' | grep -v grep | awk '{print $2}' | xargs kill -9" do
   action :nothing
 end
+kill_action.run_action(:run)
 
-e.run_action(:run)
+#write ip and domain
+update_apt_get = execute "/usr/bin/apt-get update" do
+  action :nothing
+end
+update_apt_get.run_action(:run)
 
 dns_utils = package "dnsutils" do
   action :nothing
@@ -52,6 +44,19 @@ node.default["drone"]["domain"] = drone_domain
 #stop apache - we don't need it
 service "apache2" do
   action :stop
+end
+
+#add backports repo
+script "add-backport-deb" do
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
+      echo 'deb http://archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse' >> /etc/apt/sources.list
+      apt-get update
+  EOH
+
+  not_if "cat /etc/apt/sources.list | grep precise-backports"
 end
 
 #install mono
