@@ -14,12 +14,18 @@ package 'mailutils'
 package 'curl'
 package 'mongodb'
 
+#stop mongo
+stop_monngo = service "mongodb" do
+  action :nothing
+end
+stop_monngo.run_action(:stop)
+
 #kill to free up memory
-#kill_action = execute "ps aux | grep 'rsyslog|mono|mongod' | grep -v grep | awk '{print $2}' | xargs kill -9" do
-#  only_if "ps aux | grep 'rsyslog|mono|mongod' | grep -v grep"
-#  action :nothing
-#end
-#kill_action.run_action(:run)
+kill_action = execute "ps aux | grep 'rsyslog|mono' | grep -v grep | awk '{print $2}' | xargs kill -9" do
+  only_if "ps aux | grep 'rsyslog|mono' | grep -v grep"
+  action :nothing
+end
+kill_action.run_action(:run)
 
 #write ip and domain
 update_apt_get = execute "/usr/bin/apt-get update" do
@@ -286,9 +292,7 @@ end
 
 #setup mongo
 
-service "mongodb" do
-  action :stop
-end
+
 
 directory "/deploy/mongo-data" do
   action :create
