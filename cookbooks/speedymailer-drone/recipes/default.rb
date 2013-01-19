@@ -15,7 +15,7 @@ package 'curl'
 package 'mongodb'
 
 #kill to free up memory
-kill_action = execute "ps aux | grep 'rsyslog\|mono\|mongod' | grep -v grep | awk '{print $2}' | xargs kill -9" do
+kill_action = execute "ps aux | grep 'rsyslog|mono|mongod' | grep -v grep && ps aux | grep 'rsyslog|mono|mongod' | grep -v grep | awk '{print $2}' | xargs kill -9" do
   action :nothing
 end
 kill_action.run_action(:run)
