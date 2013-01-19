@@ -1,3 +1,4 @@
+include_recipe "apt"
 include_recipe "git"
 include_recipe "ruby::1.9.1"
 include_recipe "rubygems"
